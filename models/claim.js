@@ -1,9 +1,10 @@
-module.exports = class Claim {
-    constructor(id, policyId, amount, status, dateFiled) {
-      this.id = id;
-      this.policyId = policyId;
-      this.amount = amount;
-      this.status = status;
-      this.dateFiled = dateFiled;
-    }
-};
+const mongoose = require('mongoose');
+
+const claimSchema = new mongoose.Schema({
+    policyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Policy', required: true },
+    amount: { type: Number, required: true },
+    status: { type: String, enum: ['Pending', 'Approved', 'Rejected'], default: 'Pending' },
+    dateFiled: { type: Date, default: Date.now }
+});
+
+module.exports = mongoose.model('Claim', claimSchema);

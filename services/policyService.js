@@ -1,37 +1,23 @@
 const Policy = require('../models/policy');
-const { v4: uuidv4 } = require('uuid');
-
-let policies = [];
 
 module.exports = {
-    createPolicy: (data) => {
-        const newPolicy = new Policy(
-            uuidv4(), // Generate UUID here
-            data.policyholderId, 
-            data.policyNumber, 
-            data.coverageAmount, 
-            data.startDate, 
-            data.endDate
-        );
-        policies.push(newPolicy);
-        return newPolicy;
+    createPolicy: async (data) => {
+        return await Policy.create(data);
     },
 
-    getPolicyById: (id) => policies.find((policy) => policy.id === id),
-
-    getAllPolicies: () => policies,
-
-    updatePolicyById: (id, data) => {
-        const policyIndex = policies.findIndex(policy => policy.id === id);
-        if (policyIndex !== -1) {
-            policies[policyIndex] = { ...policies[policyIndex], ...data };
-            return policies[policyIndex];
-        }
-        return null;
+    getPolicyById: async (id) => {
+        return await Policy.findById(id);
     },
 
-    deletePolicyById: (id) => {
-        policies = policies.filter(policy => policy.id !== id);
-        return { message: "Policy deleted successfully" };
+    getAllPolicies: async () => {
+        return await Policy.find();
+    },
+
+    updatePolicyById: async (id, data) => {
+        return await Policy.findByIdAndUpdate(id, data, { new: true });
+    },
+
+    deletePolicyById: async (id) => {
+        return await Policy.findByIdAndDelete(id);
     }
 };

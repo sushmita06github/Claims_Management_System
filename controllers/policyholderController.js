@@ -1,45 +1,57 @@
 const policyholderService = require('../services/policyholderService');
-const policyholderValidation = require('../validation/policyholderValidation');
 
 module.exports = {
-    createPolicyholder: (req, res) => {
+    createPolicyholder: async (req, res) => {
         try {
-            policyholderValidation.validatePolicyholderData(req.body);
-            const policyholder = policyholderService.createPolicyholder(req.body);
+            // Data Validation
+            const { name, address } = req.body;
+            if (!name || !address) {
+                return res.status(400).json({ message: "Missing required fields: name and address" });
+            }
+
+            const policyholder = await policyholderService.createPolicyholder(req.body);
             res.status(201).json(policyholder);
         } catch (err) {
             res.status(400).json({ message: err.message });
         }
     },
 
-    getPolicyholderById: (req, res) => {
-        const policyholder = policyholderService.getPolicyholderById(req.params.id);
-        if (!policyholder) {
-            return res.status(404).json({ message: "Policyholder not found" });
-        }
-        res.status(200).json(policyholder);
-    },
-
-    getAllPolicyholders: (req, res) => {
-        const policyholders = policyholderService.getAllPolicyholders();
-        res.status(200).json(policyholders);
-    },
-
-    updatePolicyholderById: (req, res) => {
+    getPolicyholderById: async (req, res) => {
         try {
-            policyholderValidation.validatePolicyholderData(req.body);
-            const updatedPolicyholder = policyholderService.updatePolicyholderById(req.params.id, req.body);
-            if (!updatedPolicyholder) {
-                return res.status(404).json({ message: "Policyholder not found" });
-            }
+            const policyholder = await policyholderService.getPolicyholderById(req.params.id);
+            if (!policyholder) return res.status(404).json({ message: "Policyholder not found" });
+            res.status(200).json(policyholder);
+        } catch (err) {
+            res.status(500).json({ message: err.message });
+        }
+    },
+
+    getAllPolicyholders: async (req, res) => {
+        try {
+            const policyholders = await policyholderService.getAllPolicyholders();
+            res.status(200).json(policyholders);
+        } catch (err) {
+            res.status(500).json({ message: err.message });
+        }
+    },
+
+    updatePolicyholderById: async (req, res) => {
+        try {
+            const updatedPolicyholder = await policyholderService.updatePolicyholderById(req.params.id, req.body);
+            if (!updatedPolicyholder) return res.status(404).json({ message: "Policyholder not found" });
             res.status(200).json(updatedPolicyholder);
         } catch (err) {
-            res.status(400).json({ message: err.message });
+            res.status(500).json({ message: err.message });
         }
     },
 
-    deletePolicyholderById: (req, res) => {
-        const result = policyholderService.deletePolicyholderById(req.params.id);
-        res.status(200).json(result);
+    deletePolicyholderById: async (req, res) => {
+        try {
+            const deletedPolicyholder = await policyholderService.deletePolicyholderById(req.params.id);
+            if (!deletedPolicyholder) return res.status(404).json({ message: "Policyholder not found" });
+            res.status(200).json(deletedPolicyholder);
+        } catch (err) {
+            res.status(500).json({ message: err.message });
+        }
     }
 };

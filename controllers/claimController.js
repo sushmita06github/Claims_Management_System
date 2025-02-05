@@ -1,44 +1,48 @@
 const claimService = require('../services/claimService');
-const claimValidation = require('../validation/claimValidation');
 
 module.exports = {
-    createClaim: (req, res) => {
+    createClaim: async (req, res) => {
         try {
-            claimValidation.validateClaimData(req.body);
-            const claim = claimService.createClaim(req.body);
+            const claim = await claimService.createClaim(req.body);
             res.status(201).json(claim);
         } catch (err) {
             res.status(400).json({ message: err.message });
         }
     },
 
-    getClaimById: (req, res) => {
-        const claim = claimService.getClaimById(req.params.id);
-        if (!claim) {
-            return res.status(404).json({ message: "Claim not found" });
-        }
-        res.status(200).json(claim);
-    },
-
-    getAllClaims: (req, res) => {
-        const claims = claimService.getAllClaims();
-        res.status(200).json(claims);
-    },
-
-    updateClaimById: (req, res) => {
+    getClaimById: async (req, res) => {
         try {
-            const updatedClaim = claimService.updateClaimById(req.params.id, req.body);
-            if (!updatedClaim) {
-                return res.status(404).json({ message: "Claim not found" });
-            }
+            const claim = await claimService.getClaimById(req.params.id);
+            if (!claim) return res.status(404).json({ message: "Claim not found" });
+            res.status(200).json(claim);
+        } catch (err) {
+            res.status(500).json({ message: err.message });
+        }
+    },
+
+    getAllClaims: async (req, res) => {
+        try {
+            res.status(200).json(await claimService.getAllClaims());
+        } catch (err) {
+            res.status(500).json({ message: err.message });
+        }
+    },
+
+    updateClaimById: async (req, res) => {
+        try {
+            const updatedClaim = await claimService.updateClaimById(req.params.id, req.body);
+            if (!updatedClaim) return res.status(404).json({ message: "Claim not found" });
             res.status(200).json(updatedClaim);
         } catch (err) {
-            res.status(400).json({ message: err.message });
+            res.status(500).json({ message: err.message });
         }
     },
 
-    deleteClaimById: (req, res) => {
-        const result = claimService.deleteClaimById(req.params.id);
-        res.status(200).json(result);
+    deleteClaimById: async (req, res) => {
+        try {
+            res.status(200).json(await claimService.deleteClaimById(req.params.id));
+        } catch (err) {
+            res.status(500).json({ message: err.message });
+        }
     }
 };

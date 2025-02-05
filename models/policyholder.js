@@ -1,8 +1,9 @@
-module.exports = class Policyholder {
-    constructor(id, name, email, phone) {
-      this.id = id;
-      this.name = name;
-      this.email = email;
-      this.phone = phone;
-    }
-};
+const mongoose = require('mongoose');
+
+const policyholderSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    phone: { type: String, required: true }
+});
+
+module.exports = mongoose.model('Policyholder', policyholderSchema);
