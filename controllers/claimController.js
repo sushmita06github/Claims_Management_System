@@ -1,8 +1,10 @@
 const claimService = require('../services/claimService');
+const claimValidation = require('../validation/claimValidation');
 
 module.exports = {
     createClaim: async (req, res) => {
         try {
+            claimValidation.validateClaimData(req.body);
             const claim = await claimService.createClaim(req.body);
             res.status(201).json(claim);
         } catch (err) {

@@ -1,9 +1,10 @@
 const policyService = require('../services/policyService');
+const policyValidation = require('../validation/policyValidation');
 
 module.exports = {
     createPolicy: async (req, res) => {
         try {
-            // Data Validation
+            policyValidation.validatePolicyData(req.body);
             const { policyNumber, policyholder, coverageAmount } = req.body;
             if (!policyNumber || !policyholder || !coverageAmount) {
                 return res.status(400).json({ message: "Missing required fields: policyNumber, policyholder, and coverageAmount" });
@@ -37,6 +38,7 @@ module.exports = {
 
     updatePolicyById: async (req, res) => {
         try {
+            policyValidation.validatePolicyData(req.body);
             const updatedPolicy = await policyService.updatePolicyById(req.params.id, req.body);
             if (!updatedPolicy) return res.status(404).json({ message: "Policy not found" });
             res.status(200).json(updatedPolicy);

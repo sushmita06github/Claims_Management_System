@@ -1,9 +1,10 @@
 const policyholderService = require('../services/policyholderService');
+const policyholderValidation = require('../validation/policyholderValidation');
 
 module.exports = {
     createPolicyholder: async (req, res) => {
         try {
-            // Data Validation
+            policyholderValidation.validatePolicyholderData(req.body);
             const { name, address } = req.body;
             if (!name || !address) {
                 return res.status(400).json({ message: "Missing required fields: name and address" });
@@ -37,6 +38,7 @@ module.exports = {
 
     updatePolicyholderById: async (req, res) => {
         try {
+            policyholderValidation.validatePolicyholderData(req.body);
             const updatedPolicyholder = await policyholderService.updatePolicyholderById(req.params.id, req.body);
             if (!updatedPolicyholder) return res.status(404).json({ message: "Policyholder not found" });
             res.status(200).json(updatedPolicyholder);
