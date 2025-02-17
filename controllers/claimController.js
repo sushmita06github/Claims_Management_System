@@ -42,9 +42,13 @@ module.exports = {
 
     deleteClaimById: async (req, res) => {
         try {
-            res.status(200).json(await claimService.deleteClaimById(req.params.id));
+            const deletedClaim = await claimService.deleteClaimById(req.params.id);
+            if (!deletedClaim) {
+                return res.status(404).json({ message: "Claim not found" });
+            }
+            return res.status(200).json({ message: "Claim deleted successfully" });
         } catch (err) {
-            res.status(500).json({ message: err.message });
+            return res.status(500).json({ message: err.message });
         }
     }
 };

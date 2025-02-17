@@ -5,8 +5,8 @@ module.exports = {
     createPolicy: async (req, res) => {
         try {
             policyValidation.validatePolicyData(req.body);
-            const { policyNumber, policyholder, coverageAmount } = req.body;
-            if (!policyNumber || !policyholder || !coverageAmount) {
+            const { policyNumber, policyholderId, coverageAmount } = req.body;
+            if (!policyNumber || !policyholderId || !coverageAmount) {
                 return res.status(400).json({ message: "Missing required fields: policyNumber, policyholder, and coverageAmount" });
             }
 
@@ -51,7 +51,8 @@ module.exports = {
         try {
             const deletedPolicy = await policyService.deletePolicyById(req.params.id);
             if (!deletedPolicy) return res.status(404).json({ message: "Policy not found" });
-            res.status(200).json(deletedPolicy);
+            //res.status(200).json(deletedPolicy);
+            res.status(200).json({ message: "Policy deleted successfully" });
         } catch (err) {
             res.status(500).json({ message: err.message });
         }
